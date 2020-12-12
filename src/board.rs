@@ -1,4 +1,3 @@
-
 struct Player;
 
 enum HexFieldState {
@@ -8,17 +7,17 @@ enum HexFieldState {
 }
 
 pub struct Coordinate {
-    x: i8,
-    y: i8,
-    z: i8,
+    pub x: i8,
+    pub y: i8,
+    pub z: i8,
 }
 
 pub struct Board {
-    fields: Vec<HexField>,
+    pub fields: Vec<HexField>,
 }
 
 pub struct HexField {
-    coordinate: Coordinate,
+    pub coordinate: Coordinate,
     state: HexFieldState,
     occupant: Option<Player>,
 }
@@ -207,4 +206,5 @@ mod tests {
     fn should_have_61_fields_when_board_is_size_5() {
         let board = Board::new(5);
         assert_eq!(board.field_count(), 61)
-    }}
+    }
+}
