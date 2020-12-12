@@ -12,8 +12,6 @@ const HEIGHT: f64 = 480.0;
 const BOARD_SIZE: i8 = 5;
 
 fn main() {
-    
-
     let mut window: PistonWindow = WindowSettings::new("Hexxagon", [WIDTH, HEIGHT])
         .exit_on_esc(true)
         .build()
