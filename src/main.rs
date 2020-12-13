@@ -20,11 +20,9 @@ fn main() {
     let board = Board::new(BOARD_SIZE);
 
     let renderer: BoardRenderer = BoardRenderer::new(&board, WIDTH, HEIGHT, BOARD_SIZE);
-
-    let fields_ref = &board.fields;
     while let Some(event) = window.next() {
         window.draw_2d(&event, |context, graphics, _device| {
-            clear([1.0; 4], graphics);
+            clear([0.1; 4], graphics);
             renderer.render(context, graphics)
         });
     }

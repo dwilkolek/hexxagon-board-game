@@ -1,7 +1,9 @@
 use piston_window::*;
 
-use crate::board::Board;
+use crate::board::{Board, HexField};
 
+const COLOR_1: [f32; 4] = [0.8, 0.2, 0.5, 1.0];
+const COLOR_2: [f32; 4] = [0.5, 0.1, 0.3, 1.0];
 pub struct BoardRenderer<'a> {
     field_size: f64,
     field_width: f64,
@@ -36,27 +38,48 @@ impl BoardRenderer<'_> {
     {
         let fields = &self.board.fields;
         fields.into_iter().for_each(|field| {
-            let x = field.coordinate.x as f64;
-            let y = field.coordinate.y as f64;
-            let z = field.coordinate.z as f64;
-            let x_offset = x * self.field_width * 3.0 / 4.0;
-            let y_offset = ((y - z) / 2.0) * self.field_height;
-            let center_x = self.window_center_x + x_offset;
-            let center_y = self.window_center_y + y_offset;
-            polygon(
-                [1.0, 0.6, 0.4, 1.0],
-                &[
-                    self.get_point_of_hex(center_x, center_y, self.field_size, 0),
-                    self.get_point_of_hex(center_x, center_y, self.field_size, 1),
-                    self.get_point_of_hex(center_x, center_y, self.field_size, 2),
-                    self.get_point_of_hex(center_x, center_y, self.field_size, 3),
-                    self.get_point_of_hex(center_x, center_y, self.field_size, 4),
-                    self.get_point_of_hex(center_x, center_y, self.field_size, 5),
-                ],
-                context.transform,
-                graphics,
-            );
-        })
+            let vertexes = self.vertexes(field);
+
+            polygon(COLOR_1, &vertexes, context.transform, graphics);
+        });
+        let fields = &self.board.fields;
+        fields.into_iter().for_each(|field| {
+            let vertexes = self.vertexes(field);
+
+            for i in 0..6 {
+                line(
+                    COLOR_2,
+                    2.0,
+                    [
+                        vertexes[i % vertexes.len()][0],
+                        vertexes[i % vertexes.len()][1],
+                        vertexes[(i + 1) % vertexes.len()][0],
+                        vertexes[(i + 1) % vertexes.len()][1],
+                    ],
+                    context.transform,
+                    graphics,
+                );
+            }
+        });
+    }
+
+    fn vertexes(&self, field: &HexField) -> [[f64; 2]; 6] {
+        let x = field.coordinate.x as f64;
+        let y = field.coordinate.y as f64;
+        let z = field.coordinate.z as f64;
+        let x_offset = x * self.field_width * 3.0 / 4.0;
+        let y_offset = ((y - z) / 2.0) * self.field_height;
+        let center_x = self.window_center_x + x_offset;
+        let center_y = self.window_center_y + y_offset;
+
+        [
+            self.get_point_of_hex(center_x, center_y, self.field_size, 5),
+            self.get_point_of_hex(center_x, center_y, self.field_size, 0),
+            self.get_point_of_hex(center_x, center_y, self.field_size, 1),
+            self.get_point_of_hex(center_x, center_y, self.field_size, 2),
+            self.get_point_of_hex(center_x, center_y, self.field_size, 3),
+            self.get_point_of_hex(center_x, center_y, self.field_size, 4),
+        ]
     }
 
     fn get_point_of_hex(&self, center_x: f64, center_y: f64, size: f64, i: i8) -> [f64; 2] {
