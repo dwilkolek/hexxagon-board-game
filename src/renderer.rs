@@ -2,8 +2,8 @@ use piston_window::*;
 
 use crate::board::{Board, HexField};
 
-const COLOR_1: [f32; 4] = [0.8, 0.2, 0.5, 1.0];
-const COLOR_2: [f32; 4] = [0.5, 0.1, 0.3, 1.0];
+const FIELD_COLOR: [f32; 4] = [0.8, 0.2, 0.5, 1.0];
+const BORDER_COLOR: [f32; 4] = [0.5, 0.1, 0.3, 1.0];
 pub struct BoardRenderer<'a> {
     field_size: f64,
     field_width: f64,
@@ -40,7 +40,7 @@ impl BoardRenderer<'_> {
         fields.into_iter().for_each(|field| {
             let vertexes = self.vertexes(field);
 
-            polygon(COLOR_1, &vertexes, context.transform, graphics);
+            polygon(FIELD_COLOR, &vertexes, context.transform, graphics);
         });
         let fields = &self.board.fields;
         fields.into_iter().for_each(|field| {
@@ -48,7 +48,7 @@ impl BoardRenderer<'_> {
 
             for i in 0..6 {
                 line(
-                    COLOR_2,
+                    BORDER_COLOR,
                     2.0,
                     [
                         vertexes[i % vertexes.len()][0],
