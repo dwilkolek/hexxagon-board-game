@@ -1,8 +1,10 @@
 extern crate piston_window;
 
+use crate::board::{Coordinate, HexFieldState};
 use board::Board;
 use piston_window::*;
 use renderer::BoardRenderer;
+use std::collections::HashMap;
 
 mod board;
 mod renderer;
@@ -17,7 +19,26 @@ fn main() {
         .build()
         .unwrap();
 
-    let board = Board::new(BOARD_SIZE);
+    let mut starting_params = HashMap::new();
+    starting_params.insert(Coordinate::new(0, -1), HexFieldState::DISABLED);
+    starting_params.insert(Coordinate::new(-1, 1), HexFieldState::DISABLED);
+    starting_params.insert(Coordinate::new(1, 0), HexFieldState::DISABLED);
+
+    starting_params.insert(Coordinate::new(0, -BOARD_SIZE + 1), HexFieldState::PLAYER1);
+    starting_params.insert(
+        Coordinate::new(-BOARD_SIZE + 1, BOARD_SIZE - 1),
+        HexFieldState::PLAYER1,
+    );
+    starting_params.insert(Coordinate::new(BOARD_SIZE - 1, 0), HexFieldState::PLAYER1);
+
+    starting_params.insert(Coordinate::new(-BOARD_SIZE + 1, 0), HexFieldState::PLAYER2);
+    starting_params.insert(
+        Coordinate::new(BOARD_SIZE - 1, -BOARD_SIZE + 1),
+        HexFieldState::PLAYER2,
+    );
+    starting_params.insert(Coordinate::new(0, BOARD_SIZE - 1), HexFieldState::PLAYER2);
+
+    let board = Board::new(BOARD_SIZE, starting_params);
 
     let renderer: BoardRenderer = BoardRenderer::new(&board, WIDTH, HEIGHT, BOARD_SIZE);
     while let Some(event) = window.next() {

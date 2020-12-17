@@ -1,11 +1,16 @@
-struct Player;
+use std::collections::HashMap;
 
-enum HexFieldState {
+pub struct Player;
+
+#[derive(Debug, Copy, Clone)]
+pub enum HexFieldState {
     DISABLED,
     EMPTY,
-    OCCUPIED,
+    PLAYER_1,
+    PLAYER_2,
 }
 
+#[derive(Hash)]
 pub struct Coordinate {
     pub x: i8,
     pub y: i8,
@@ -18,9 +23,14 @@ pub struct Board {
 
 pub struct HexField {
     pub coordinate: Coordinate,
-    state: HexFieldState,
-    occupant: Option<Player>,
+    pub state: HexFieldState,
 }
+impl PartialEq for Coordinate {
+    fn eq(&self, other: &Self) -> bool {
+        self.distance(other) == 0
+    }
+}
+impl Eq for Coordinate {}
 
 impl Coordinate {
     pub fn new(x: i8, y: i8) -> Coordinate {
@@ -37,7 +47,7 @@ impl Coordinate {
 }
 
 impl Board {
-    pub fn new(size: i8) -> Board {
+    pub fn new(size: i8, map: HashMap<Coordinate, HexFieldState>) -> Board {
         let mut coordinates = Vec::new();
         coordinates.push(Coordinate::new(0, 0));
         for current_ring in 1..size {
@@ -79,10 +89,12 @@ impl Board {
         }
         let fields: Vec<HexField> = coordinates
             .into_iter()
-            .map(|coordinate| HexField {
-                coordinate,
-                state: HexFieldState::EMPTY,
-                occupant: None,
+            .map(|coordinate| {
+                let state = match map.get(&coordinate) {
+                    Some(state) => *state,
+                    None => HexFieldState::EMPTY,
+                };
+                HexField { coordinate, state }
             })
             .collect();
         Board { fields }
@@ -186,25 +198,25 @@ mod tests {
 
     #[test]
     fn should_have_1_fields_when_board_is_size_1() {
-        let board = Board::new(1);
+        let board = Board::new(1, HashMap::new());
         assert_eq!(board.field_count(), 1)
     }
 
     #[test]
     fn should_have_7_fields_when_board_is_size_2() {
-        let board = Board::new(2);
+        let board = Board::new(2, HashMap::new());
         assert_eq!(board.field_count(), 7)
     }
 
     #[test]
     fn should_have_3_fields_when_board_is_size_19() {
-        let board = Board::new(3);
+        let board = Board::new(3, HashMap::new());
         assert_eq!(board.field_count(), 19)
     }
 
     #[test]
     fn should_have_61_fields_when_board_is_size_5() {
-        let board = Board::new(5);
+        let board = Board::new(5, HashMap::new());
         assert_eq!(board.field_count(), 61)
     }
 }

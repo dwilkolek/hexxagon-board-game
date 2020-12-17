@@ -1,8 +1,11 @@
 use piston_window::*;
 
-use crate::board::{Board, HexField};
+use crate::board::{Board, HexField, HexFieldState};
 
 const FIELD_COLOR: [f32; 4] = [0.8, 0.2, 0.5, 1.0];
+const FIELD_DISABLED_COLOR: [f32; 4] = [0.0, 0.0, 0.0, 1.0];
+const FIELD_PLAYER_1_COLOR: [f32; 4] = [1.0, 0.0, 0.0, 1.0];
+const FIELD_PLAYER_2_COLOR: [f32; 4] = [0.0, 0.0, 1.0, 1.0];
 const BORDER_COLOR: [f32; 4] = [0.5, 0.1, 0.3, 1.0];
 pub struct BoardRenderer<'a> {
     field_size: f64,
@@ -39,8 +42,13 @@ impl BoardRenderer<'_> {
         let fields = &self.board.fields;
         fields.into_iter().for_each(|field| {
             let vertexes = self.vertexes(field);
-
-            polygon(FIELD_COLOR, &vertexes, context.transform, graphics);
+            let background = match field.state {
+                HexFieldState::DISABLED => FIELD_DISABLED_COLOR,
+                HexFieldState::PLAYER1 => FIELD_PLAYER_1_COLOR,
+                HexFieldState::PLAYER2 => FIELD_PLAYER_2_COLOR,
+                _ => FIELD_COLOR,
+            };
+            polygon(background, &vertexes, context.transform, graphics);
         });
         let fields = &self.board.fields;
         fields.into_iter().for_each(|field| {
