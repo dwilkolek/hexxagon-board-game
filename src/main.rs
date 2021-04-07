@@ -20,23 +20,23 @@ fn main() {
         .unwrap();
 
     let mut starting_params = HashMap::new();
-    starting_params.insert(Coordinate::new(0, -1), HexFieldState::DISABLED);
-    starting_params.insert(Coordinate::new(-1, 1), HexFieldState::DISABLED);
-    starting_params.insert(Coordinate::new(1, 0), HexFieldState::DISABLED);
+    starting_params.insert(Coordinate::new(0, -1), HexFieldState::Disabled);
+    starting_params.insert(Coordinate::new(-1, 1), HexFieldState::Disabled);
+    starting_params.insert(Coordinate::new(1, 0), HexFieldState::Disabled);
 
-    starting_params.insert(Coordinate::new(0, -BOARD_SIZE + 1), HexFieldState::PLAYER1);
+    starting_params.insert(Coordinate::new(0, -BOARD_SIZE + 1), HexFieldState::Player1);
     starting_params.insert(
         Coordinate::new(-BOARD_SIZE + 1, BOARD_SIZE - 1),
-        HexFieldState::PLAYER1,
+        HexFieldState::Player1,
     );
-    starting_params.insert(Coordinate::new(BOARD_SIZE - 1, 0), HexFieldState::PLAYER1);
+    starting_params.insert(Coordinate::new(BOARD_SIZE - 1, 0), HexFieldState::Player1);
 
-    starting_params.insert(Coordinate::new(-BOARD_SIZE + 1, 0), HexFieldState::PLAYER2);
+    starting_params.insert(Coordinate::new(-BOARD_SIZE + 1, 0), HexFieldState::Player2);
     starting_params.insert(
         Coordinate::new(BOARD_SIZE - 1, -BOARD_SIZE + 1),
-        HexFieldState::PLAYER2,
+        HexFieldState::Player2,
     );
-    starting_params.insert(Coordinate::new(0, BOARD_SIZE - 1), HexFieldState::PLAYER2);
+    starting_params.insert(Coordinate::new(0, BOARD_SIZE - 1), HexFieldState::Player2);
 
     let board = Board::new(BOARD_SIZE, starting_params);
 

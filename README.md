@@ -1,0 +1,3 @@
+# Hexxagon 
+
+> cargo run

@@ -43,14 +43,14 @@ impl BoardRenderer<'_> {
         fields.into_iter().for_each(|field| {
             let vertexes = self.vertexes(field);
             let background = match field.state {
-                HexFieldState::DISABLED => FIELD_DISABLED_COLOR,
-                HexFieldState::PLAYER1 => FIELD_PLAYER_1_COLOR,
-                HexFieldState::PLAYER2 => FIELD_PLAYER_2_COLOR,
+                HexFieldState::Disabled => FIELD_DISABLED_COLOR,
+                HexFieldState::Player1 => FIELD_PLAYER_1_COLOR,
+                HexFieldState::Player2 => FIELD_PLAYER_2_COLOR,
                 _ => FIELD_COLOR,
             };
             polygon(background, &vertexes, context.transform, graphics);
         });
-        let fields = &self.board.fields;
+
         fields.into_iter().for_each(|field| {
             let vertexes = self.vertexes(field);
 
@@ -81,12 +81,12 @@ impl BoardRenderer<'_> {
         let center_y = self.window_center_y + y_offset;
 
         [
-            self.get_point_of_hex(center_x, center_y, self.field_size, 5),
             self.get_point_of_hex(center_x, center_y, self.field_size, 0),
             self.get_point_of_hex(center_x, center_y, self.field_size, 1),
             self.get_point_of_hex(center_x, center_y, self.field_size, 2),
             self.get_point_of_hex(center_x, center_y, self.field_size, 3),
             self.get_point_of_hex(center_x, center_y, self.field_size, 4),
+            self.get_point_of_hex(center_x, center_y, self.field_size, 5),
         ]
     }
 

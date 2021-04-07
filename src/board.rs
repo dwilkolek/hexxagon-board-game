@@ -1,13 +1,11 @@
 use std::collections::HashMap;
 
-pub struct Player;
-
 #[derive(Debug, Copy, Clone)]
 pub enum HexFieldState {
-    DISABLED,
-    EMPTY,
-    PLAYER_1,
-    PLAYER_2,
+    Disabled,
+    Empty,
+    Player1,
+    Player2,
 }
 
 #[derive(Hash)]
@@ -25,11 +23,13 @@ pub struct HexField {
     pub coordinate: Coordinate,
     pub state: HexFieldState,
 }
+
 impl PartialEq for Coordinate {
     fn eq(&self, other: &Self) -> bool {
         self.distance(other) == 0
     }
 }
+
 impl Eq for Coordinate {}
 
 impl Coordinate {
@@ -92,7 +92,7 @@ impl Board {
             .map(|coordinate| {
                 let state = match map.get(&coordinate) {
                     Some(state) => *state,
-                    None => HexFieldState::EMPTY,
+                    None => HexFieldState::Empty,
                 };
                 HexField { coordinate, state }
             })
@@ -104,7 +104,7 @@ impl Board {
     //     self.fields
     //         .into_iter()
     //         .filter(|h| match h.state {
-    //             HexFieldState::EMPTY => true,
+    //             HexFieldState::Empty => true,
     //             _ => false,
     //         })
     //         .filter(|h| {
