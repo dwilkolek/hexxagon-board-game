@@ -38,13 +38,22 @@ fn main() {
     );
     starting_params.insert(Coordinate::new(0, BOARD_SIZE - 1), HexFieldState::Player2);
 
-    let board = Board::new(BOARD_SIZE, starting_params);
+    let mut board = Board::new(BOARD_SIZE, starting_params);
+    let mut events = Events::new(EventSettings::new().lazy(true));
+    let renderer: BoardRenderer = BoardRenderer::new(WIDTH, HEIGHT, BOARD_SIZE);
 
-    let renderer: BoardRenderer = BoardRenderer::new(&board, WIDTH, HEIGHT, BOARD_SIZE);
-    while let Some(event) = window.next() {
-        window.draw_2d(&event, |context, graphics, _device| {
+    while let Some(e) = events.next(&mut window) {
+        board.event(&e);
+        window.draw_2d(&e, |context, graphics, _device| {
             clear([0.1; 4], graphics);
-            renderer.render(context, graphics)
+            renderer.render(&board, context, graphics)
         });
     }
+
+    // while let Some(event) = window.next() {
+    //     window.draw_2d(&event, |context, graphics, _device| {
+    //         clear([0.1; 4], graphics);
+    //         renderer.render(context, graphics)
+    //     });
+    // }
 }

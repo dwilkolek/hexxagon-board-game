@@ -1,5 +1,7 @@
 use std::collections::HashMap;
 
+use piston::GenericEvent;
+
 #[derive(Debug, Copy, Clone)]
 pub enum HexFieldState {
     Disabled,
@@ -8,7 +10,7 @@ pub enum HexFieldState {
     Player2,
 }
 
-#[derive(Hash)]
+#[derive(Hash, Eq, Clone)]
 pub struct Coordinate {
     pub x: i8,
     pub y: i8,
@@ -17,6 +19,7 @@ pub struct Coordinate {
 
 pub struct Board {
     pub fields: Vec<HexField>,
+    pub selected_field: Option<HexField>,
 }
 
 pub struct HexField {
@@ -29,8 +32,6 @@ impl PartialEq for Coordinate {
         self.distance(other) == 0
     }
 }
-
-impl Eq for Coordinate {}
 
 impl Coordinate {
     pub fn new(x: i8, y: i8) -> Coordinate {
@@ -97,23 +98,65 @@ impl Board {
                 HexField { coordinate, state }
             })
             .collect();
-        Board { fields }
+        Board {
+            fields,
+            selected_field: None,
+        }
     }
 
-    // pub fn possible_move_options(&self, from: &Coordinate, range: i8) -> Vec<Coordinate> {
-    //     self.fields
-    //         .into_iter()
-    //         .filter(|h| match h.state {
-    //             HexFieldState::Empty => true,
-    //             _ => false,
-    //         })
-    //         .filter(|h| {
-    //             let dist = from.distance(&h.coordinate);
-    //             dist < range && range != 0
-    //         })
-    //         .map(|h| h.coordinate)
-    //         .collect::<Vec<Coordinate>>()
-    // }
+    /// Handles events.
+    pub fn event<E: GenericEvent>(&mut self, e: &E) {
+        use piston::input::{Button, Key, MouseButton};
+        if let Some(cursor_pos) = e.mouse_cursor_args() {
+            println!("mouse pos: {:?}", cursor_pos);
+            if let Some(Button::Mouse(MouseButton::Left)) = e.press_args() {
+                // Find coordinates relative to upper left corner.
+                // let x = cursor_pos[0] - pos[0];
+                // let y = cursor_pos[1] - pos[1];
+                // Check that coordinates are inside board boundaries.
+                // if x >= 0.0 && x <= size && y >= 0.0 && y <= size {
+                //     // Compute the cell position.
+                //     let cell_x = (x / size * 9.0) as usize;
+                //     let cell_y = (y / size * 9.0) as usize;
+                //     self.selected_cell = Some([cell_x, cell_y]);
+                // }
+            }
+        }
+
+        // if let Some(Button::Keyboard(key)) = e.press_args() {
+        //     if let Some(ind) = self.selected_cell {
+        //         // Set cell value.
+        //         match key {
+        //             Key::D1 => self.gameboard.set(ind, 1),
+        //             Key::D2 => self.gameboard.set(ind, 2),
+        //             Key::D3 => self.gameboard.set(ind, 3),
+        //             Key::D4 => self.gameboard.set(ind, 4),
+        //             Key::D5 => self.gameboard.set(ind, 5),
+        //             Key::D6 => self.gameboard.set(ind, 6),
+        //             Key::D7 => self.gameboard.set(ind, 7),
+        //             Key::D8 => self.gameboard.set(ind, 8),
+        //             Key::D9 => self.gameboard.set(ind, 9),
+        //             Key::Backspace => self.gameboard.set(ind, 0),
+        //             _ => {}
+        //         }
+        //     }
+        // }
+    }
+
+    pub fn possible_move_options(self, from: Coordinate, range: i8) -> Vec<Coordinate> {
+        self.fields
+            .into_iter()
+            .filter(|h| match h.state {
+                HexFieldState::Empty => true,
+                _ => false,
+            })
+            .filter(|h| {
+                let dist = from.distance(&h.coordinate);
+                dist < range && range != 0
+            })
+            .map(|h| h.coordinate)
+            .collect::<Vec<Coordinate>>()
+    }
 
     pub fn field_count(self) -> usize {
         self.fields.len()

@@ -7,40 +7,33 @@ const FIELD_DISABLED_COLOR: [f32; 4] = [0.0, 0.0, 0.0, 1.0];
 const FIELD_PLAYER_1_COLOR: [f32; 4] = [1.0, 0.0, 0.0, 1.0];
 const FIELD_PLAYER_2_COLOR: [f32; 4] = [0.0, 0.0, 1.0, 1.0];
 const BORDER_COLOR: [f32; 4] = [0.5, 0.1, 0.3, 1.0];
-pub struct BoardRenderer<'a> {
+pub struct BoardRenderer {
     field_size: f64,
     field_width: f64,
     field_height: f64,
-    board: &'a Board,
     window_center_x: f64,
     window_center_y: f64,
 }
 
-impl BoardRenderer<'_> {
-    pub fn new(
-        board: &Board,
-        window_width: f64,
-        window_height: f64,
-        board_size: i8,
-    ) -> BoardRenderer {
+impl BoardRenderer {
+    pub fn new(window_width: f64, window_height: f64, board_size: i8) -> BoardRenderer {
         let field_size =
             (window_height).min(window_width) / ((board_size as f64 + 1.0) * 2.0) * 0.65;
         BoardRenderer {
             field_size,
             field_width: field_size * 2_f64,
             field_height: 3_f64.sqrt() * field_size,
-            board,
             window_center_x: window_width / 2.0,
             window_center_y: window_height / 2.0,
         }
     }
 
-    pub fn render<G>(&self, context: Context, graphics: &mut G)
+    pub fn render<G>(&self, board: &Board, context: Context, graphics: &mut G)
     where
         G: Graphics,
     {
-        let fields = &self.board.fields;
-        fields.into_iter().for_each(|field| {
+        // let fields = board.fields;
+        board.fields.iter().for_each(|field| {
             let vertexes = self.vertexes(field);
             let background = match field.state {
                 HexFieldState::Disabled => FIELD_DISABLED_COLOR,
@@ -51,7 +44,7 @@ impl BoardRenderer<'_> {
             polygon(background, &vertexes, context.transform, graphics);
         });
 
-        fields.into_iter().for_each(|field| {
+        board.fields.iter().for_each(|field| {
             let vertexes = self.vertexes(field);
 
             for i in 0..6 {
